@@ -89,18 +89,18 @@ void print_token_json(const Token *token) {
     printf("        \"column\": %d,\n", token->pos.column);
     printf("        \"offset\": %d\n", token->pos.offset);
     printf("      }");
-    
+
     if (token->type == TOKEN_INTEGER) {
         printf(",\n      \"value\": %d", token->value.int_val);
     } else if (token->type == TOKEN_FLOAT) {
         printf(",\n      \"value\": %.6f", token->value.float_val);
     }
-    
+
     printf("\n    }");
 }
 
 void print_token_table(const Token *token) {
-    printf("| %-12s | %-15s | %4d:%-2d | %-10s |\n", 
+    printf("| %-12s | %-15s | %4d:%-2d | %-10s |\n",
            token_type_name(token->type),
            token->lexeme,
            token->pos.line, token->pos.column,
@@ -117,42 +117,42 @@ void stage1_raw_lexemes(const char *filename) {
         perror("Cannot open file");
         return;
     }
-    
+
     printf("Raw file content:\n");
-    printf("ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ\n");
+    printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
     char buffer[1024];
     while (fgets(buffer, sizeof(buffer), file)) {
         printf("%s", buffer);
     }
-    printf("ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ\n");
+    printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
     fclose(file);
 }
 
 void stage2_token_stream(const char *filename) {
     printf("\n=== STAGE 2: Token Stream ===\n");
-    
+
     yyin = fopen(filename, "r");
     if (!yyin) {
         perror("Cannot open file");
         return;
     }
-    
+
     int token_count = lex_and_store();
     fclose(yyin);
-    
+
     printf("Generated %d tokens:\n\n", token_count);
-    
+
     // Table format
     printf("Token Table:\n");
-    printf("ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄ¿\n");
-    printf("³ Token Type  ³ Lexeme          ³ Pos     ³ Value Type ³\n");
-    printf("ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄ´\n");
-    
+    printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿\n");
+    printf("ï¿½ Token Type  ï¿½ Lexeme          ï¿½ Pos     ï¿½ Value Type ï¿½\n");
+    printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´\n");
+
     for (size_t i = 0; i < global_tokens.count; i++) {
         print_token_table(&global_tokens.tokens[i]);
     }
-    printf("ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÙ\n");
-    
+    printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
+
     // JSON format
     printf("\nJSON Format:\n");
     printf("{\n  \"tokens\": [\n");
@@ -167,22 +167,22 @@ void stage2_token_stream(const char *filename) {
 void stage3_ast_preview() {
     printf("\n=== STAGE 3: AST Preview ===\n");
     printf("(Parser will build AST nodes from token stream)\n\n");
-    
+
     // Mock AST analysis of token patterns
     printf("Detected patterns:\n");
     for (size_t i = 0; i < global_tokens.count; i++) {
         Token *token = &global_tokens.tokens[i];
-        
+
         if (token->type == TOKEN_BANG) {
-            printf(" Invocation pattern starting at %d:%d\n", 
+            printf(" Invocation pattern starting at %d:%d\n",
                    token->pos.line, token->pos.column);
         }
         if (token->type == TOKEN_BIND || token->type == TOKEN_UNBIND) {
-            printf(" Bind operation at %d:%d\n", 
+            printf(" Bind operation at %d:%d\n",
                    token->pos.line, token->pos.column);
         }
         if (token->type == TOKEN_VEC) {
-            printf(" Vector construction at %d:%d\n", 
+            printf(" Vector construction at %d:%d\n",
                    token->pos.line, token->pos.column);
         }
     }
@@ -191,10 +191,43 @@ void stage3_ast_preview() {
 void stage4_codegen_preview() {
     printf("\n=== STAGE 4: Codegen Preview ===\n");
     printf("(Will generate C skeleton from AST)\n\n");
-    
+
     printf("Expected C output patterns:\n");
     printf(" #bind()  parallel_diff() calls\n");
     printf(" !vec<N>()  vec_make() + norm() calls\n");
     printf(" span[..]  normalize_to_span() calls\n");
     printf(" NIL handling  NaN or NIL_PTR checks\n");
+}
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <file.gs> [--json|--table|--all]\n", argv[0]);
+        return 1;
+    }
+
+    const char *filename = argv[1];
+    const char *output_mode = (argc > 2) ? argv[2] : "--all";
+
+    printf("ğŸ”§ Gosilang MVP Lexer Pipeline\n");
+    printf("ğŸ“ Processing: %s\n", filename);
+    printf("ğŸ¯ OBINexus Computing - Services from the Heartâ¤ï¸\n");
+
+    if (strcmp(output_mode, "--all") == 0) {
+        stage1_raw_lexemes(filename);
+        stage2_token_stream(filename);
+        stage3_ast_preview();
+        stage4_codegen_preview();
+    } else if (strcmp(output_mode, "--tokens") == 0) {
+        stage2_token_stream(filename);
+    } else if (strcmp(output_mode, "--raw") == 0) {
+        stage1_raw_lexemes(filename);
+    }
+
+    // Cleanup
+    token_list_free(&global_tokens);
+
+    printf("\nâœ… Pipeline complete - ready for Phase 2 (Parser)\n");
+    printf("#hacc #noghosting #sorrynotsorry\n");
+
+    return 0;
 }
