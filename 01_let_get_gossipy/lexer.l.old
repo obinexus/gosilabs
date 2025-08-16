@@ -1,8 +1,32 @@
 %{
+%option nounput
+%option noinput
+%option noyywrap
+#define _GNU_SOURCE
+#define _DEFAULT_SOURCE
+%{
+%option nounput
+%option noinput
+%option noyywrap
 #include "token.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#define _GNU_SOURCE
+#define _DEFAULT_SOURCE
+#include "token.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+// Global position tracking for OBINexus compliance
+Position current_pos = {1, 1, 0};
+TokenList global_tokens;
+%}
+
+%option nounput
+%option noinput
+%option noyywrap
 
 // Global position tracking for OBINexus compliance
 Position current_pos = {1, 1, 0};

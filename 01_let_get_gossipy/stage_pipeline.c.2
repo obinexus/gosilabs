@@ -1,5 +1,7 @@
 #define _GNU_SOURCE
 #define _DEFAULT_SOURCE
+#define _GNU_SOURCE
+#define _DEFAULT_SOURCE
 #include "token.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -181,7 +183,7 @@ int main(int argc, char **argv) {
     const char *output_mode = (argc > 2) ? argv[2] : "--all";
     
     printf("🔧 Gosilang MVP Lexer Pipeline\n");
-    printf("📄 Processing: %s\n", filename);
+    printf("📁 Processing: %s\n", filename);
     printf("🎯 OBINexus Computing - Services from the Heart ❤️\n");
     
     if (strcmp(output_mode, "--all") == 0) {
