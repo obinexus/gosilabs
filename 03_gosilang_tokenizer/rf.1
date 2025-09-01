@@ -1,0 +1,225 @@
+#!rift/1.0
+@namespace: lang.gosilang.obinexus.compiler.core.uk.org
+@component: gosilang_core
+@stage: rf.0.1
+@governance: gov.rift.0.in.xml
+@compilation_unit: "a7c3b2d1-4e5f-6a7b-8c9d-0e1f2a3b4c5d"
+
+[metadata]
+component_id: "a7c3b2d1-4e5f-6a7b-8c9d-0e1f2a3b4c5d"
+stage_binding: 1
+qa_compliance_level: 1
+timestamp: "2025-09-02T00:15:00Z"
+author: "obinexus_rifter"
+breath: "Crafting gosilang with mathematical precision"
+
+[token_declarations]
+token IDENTIFIER :: r"[a-zA-Z_][a-zA-Z0-9_]*" {
+    triplet: {
+        type: identifier
+        memory: dynamic
+        value: computed
+    }
+    stage_constraint: 0
+    qa_assertion: "follows_naming_convention"
+    error_zone: 3
+}
+
+token NUMBER :: r"[0-9]+(\.[0-9]+)?" {
+    triplet: {
+        type: constant
+        memory: static
+        value: immediate
+    }
+    stage_constraint: 0
+    qa_assertion: "numeric_bounds_checked"
+    error_zone: 3
+}
+
+token STRING :: r"\"([^\"\\]|\\.)*\"" {
+    triplet: {
+        type: constant
+        memory: heap
+        value: immediate
+    }
+    stage_constraint: 0
+    qa_assertion: "string_escaped_properly"
+    error_zone: 3
+}
+
+token OPERATOR :: r"[+\-*/=<>!&|]+" {
+    triplet: {
+        type: operator
+        memory: stack
+        value: immediate
+    }
+    stage_constraint: 0
+    qa_assertion: "valid_operator_set"
+    error_zone: 3
+}
+
+token KEYWORD :: r"(func|var|const|if|else|for|while|return|import|export|class)" {
+    triplet: {
+        type: keyword
+        memory: static
+        value: immediate
+    }
+    stage_constraint: 0
+    qa_assertion: "reserved_keyword"
+    error_zone: 2
+}
+
+token DELIMITER :: r"[(){}\[\],;:]" {
+    triplet: {
+        type: delimiter
+        memory: stack
+        value: immediate
+    }
+    stage_constraint: 0
+    qa_assertion: "balanced_delimiters"
+    error_zone: 4
+}
+
+[grammar_productions]
+rule program {
+    production: statement*
+    policy: Foundation
+    qa_gate: {
+        cyclomatic_complexity: <=10
+        coverage_requirement: >=90%
+        performance_threshold: <=50ms
+    }
+}
+
+rule statement {
+    production: variable_declaration | function_declaration | expression_statement
+    policy: Foundation
+    qa_gate: {
+        cyclomatic_complexity: <=5
+        coverage_requirement: >=95%
+        performance_threshold: <=10ms
+    }
+}
+
+rule variable_declaration {
+    production: KEYWORD("var") IDENTIFIER (OPERATOR("=") expression)?
+    policy: Foundation
+    qa_gate: {
+        cyclomatic_complexity: <=3
+        coverage_requirement: >=95%
+        performance_threshold: <=5ms
+    }
+}
+
+rule function_declaration {
+    production: KEYWORD("func") IDENTIFIER DELIMITER("(") parameter_list? DELIMITER(")") block
+    policy: Aspirational
+    qa_gate: {
+        cyclomatic_complexity: <=8
+        coverage_requirement: >=85%
+        performance_threshold: <=20ms
+    }
+}
+
+rule expression {
+    production: primary (OPERATOR primary)*
+    policy: Foundation
+    qa_gate: {
+        cyclomatic_complexity: <=5
+        coverage_requirement: >=90%
+        performance_threshold: <=10ms
+    }
+}
+
+rule primary {
+    production: IDENTIFIER | NUMBER | STRING | DELIMITER("(") expression DELIMITER(")")
+    policy: Foundation
+    qa_gate: {
+        cyclomatic_complexity: <=2
+        coverage_requirement: >=95%
+        performance_threshold: <=5ms
+    }
+}
+
+[semantic_rules]
+rule type_inference {
+    description: "Infer types from context"
+    validation: "all_variables_typed"
+    error_zone: 5
+}
+
+rule scope_resolution {
+    description: "Resolve identifier scopes"
+    validation: "no_undefined_references"
+    error_zone: 6
+}
+
+[optimization_rules]
+rule constant_folding {
+    description: "Fold constant expressions at compile time"
+    condition: "expression_contains_only_constants"
+    action: "evaluate_and_replace"
+    stage: 2
+}
+
+rule dead_code_elimination {
+    description: "Remove unreachable code"
+    condition: "control_flow_analysis_complete"
+    action: "remove_unreachable_blocks"
+    stage: 3
+}
+
+[component_bindings]
+bind "src/gosilang_tokenizer.c" {
+    type: c
+    stage: rf.0.1
+    qa_assertions: [
+        "buffer_overflow_protected",
+        "thread_safe_tokenization",
+        "memory_leak_free"
+    ]
+}
+
+bind "src/gosilang_parser.c" {
+    type: c
+    stage: rf.0.2
+    qa_assertions: [
+        "ast_correctly_formed",
+        "parser_error_recovery",
+        "memory_efficient"
+    ]
+}
+
+[compile_gates]
+gate token_validation {
+    condition: all_tokens_have_valid_r_syntax
+    action_on_fail: abort
+    severity: 6
+}
+
+gate grammar_consistency {
+    condition: all_productions_have_qa_gates
+    action_on_fail: warn
+    severity: 4
+}
+
+gate memory_safety {
+    condition: no_buffer_overflows_detected
+    action_on_fail: abort
+    severity: 8
+}
+
+[stage_transitions]
+transition tokenizer_to_parser {
+    from: rf.0.1
+    to: rf.0.2
+    condition: "tokenization_complete && token_validation_passed"
+    qa_requirement: "token_stream_integrity"
+}
+
+transition parser_to_semantic {
+    from: rf.0.2
+    to: rf.0.3
+    condition: "ast_construction_complete && grammar_consistency_passed"
+    qa_requirement: "ast_well_formed"
+}

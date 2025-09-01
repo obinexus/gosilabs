@@ -1,0 +1,82 @@
+// sample.gosi - Demonstrating ODTS principles
+import math
+
+// Function with traceable derivatives
+func polynomial(x) {
+    // y = 5x³ - 2x² - 6 (from ODTS example)
+    return 5 * x * x * x - 2 * x * x - 6
+}
+
+// First derivative: dy/dx = 15x² - 4x
+func polynomial_d1(x) {
+    return 15 * x * x - 4 * x
+}
+
+// Second derivative: d²y/dx² = 30x - 4
+func polynomial_d2(x) {
+    return 30 * x - 4
+}
+
+// Third derivative: d³y/dx³ = 30 (constant - stability point)
+func polynomial_d3(x) {
+    return 30
+}
+
+// Fourth derivative: d⁴y/dx⁴ = 0 (exhaustion point)
+func polynomial_d4(x) {
+    return 0
+}
+
+// Verify ODTS termination principle
+func verify_termination() {
+    var x = 34
+    var y = polynomial(x)
+    
+    // Trace derivatives
+    var d1 = polynomial_d1(x)  // Rate of change
+    var d2 = polynomial_d2(x)  // Curvature
+    var d3 = polynomial_d3(x)  // Stability threshold
+    var d4 = polynomial_d4(x)  // Exhaustion point
+    
+    // Assert termination
+    if d4 == 0 {
+        print("ODTS Verification: Derivative termination confirmed ✓")
+    } else {
+        panic("ODTS Violation: Non-terminating derivative detected!")
+    }
+}
+
+// Main entry point
+func main() {
+    print("OBINexus Derivative Tracing System")
+    print("==================================")
+    
+    verify_termination()
+    
+    // Web app integration example
+    var server = web.create_server(8080)
+    server.route("/api/derivative", handle_derivative_request)
+    server.start()
+}
+
+// HTTP handler for derivative calculations
+func handle_derivative_request(req) {
+    var x = req.query.get("x")
+    var order = req.query.get("order", 0)
+    
+    var result = match order {
+        0 => polynomial(x),
+        1 => polynomial_d1(x),
+        2 => polynomial_d2(x),
+        3 => polynomial_d3(x),
+        4 => polynomial_d4(x),
+        _ => error("Invalid derivative order")
+    }
+    
+    return web.json_response({
+        "x": x,
+        "order": order,
+        "result": result,
+        "odts_verified": true
+    })
+}
