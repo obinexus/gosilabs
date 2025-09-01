@@ -12,7 +12,7 @@
 // ===== QUANTUM-INSPIRED NULL/NIL SAFETY SYSTEM =====
 
 // Traditional NULL - void pointer for standard C compatibility
-#define NULL ((void*)0)
+//#define NULL ((void*)0)
 
 // NIL - Quantum-inspired no-memory allocation state
 // Represents superposition state: no type, no memory, no value
