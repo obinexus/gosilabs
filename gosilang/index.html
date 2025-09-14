@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIFT Mobile Development - GossipLabs with Gini</title>
+    <style>
+        :root {
+            --primary-orange: #FF6B35;
+            --secondary-teal: #2D9CDB;
+            --accent-green: #27AE60;
+            --dark-navy: #1A1A2E;
+            --light-bg: #F5F5F5;
+            --thread-safe-green: #00D9A3;
+            --warning-yellow: #F2C94C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Network */
+        .network-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .network-node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-orange);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        /* Header with Gini */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 5%;
+            background: rgba(26, 26, 46, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary-orange);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .gini-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--primary-orange), var(--secondary-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--accent-green);
+            margin-bottom: 2rem;
+        }
+
+        .gini-speech {
+            background: rgba(255, 107, 53, 0.1);
+            border: 2px solid var(--primary-orange);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            position: relative;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .gini-speech::before {
+            content: "🦜";
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            font-size: 2rem;
+            background: var(--dark-navy);
+            padding: 0 10px;
+        }
+
+        /* Platform Cards */
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .platform-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-orange);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .platform-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Code Demo Section */
+        .code-demo {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.6;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #e6e6e6;
+        }
+
+        .keyword { color: #ff79c6; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; }
+        .function { color: #8be9fd; }
+        .decorator { color: #ffb86c; }
+
+        /* QA Metrics Dashboard */
+        .qa-metrics {
+            background: rgba(0, 217, 163, 0.1);
+            border: 2px solid var(--thread-safe-green);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--thread-safe-green);
+        }
+
+        .metric-label {
+            margin-top: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Thread Safety Indicator */
+        .thread-safety-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 217, 163, 0.2);
+            border: 1px solid var(--thread-safe-green);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            margin: 1rem 0;
+        }
+
+        .safety-indicator {
+            width: 10px;
+            height: 10px;
+            background: var(--thread-safe-green);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 5rem;
+        }
+
+        .footer-tagline {
+            color: var(--primary-orange);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2rem; }
+            .platforms-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Network Background Animation -->
+    <div class="network-bg" id="networkBg"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-section">
+            <div class="gini-avatar">🦜</div>
+            <div>
+                <h1>GossipLabs</h1>
+                <small style="color: var(--accent-green);">RIFT Mobile Development</small>
+            </div>
+        </div>
+        <div class="thread-safety-badge">
+            <div class="safety-indicator"></div>
+            <span>100% Thread Safe</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h2 class="hero-title">Build Thread-Safe Mobile Apps with RIFT</h2>
+            <p class="subtitle">The World's First Polyglot Programming Framework</p>
+            
+            <div class="gini-speech">
+                <p><strong>Gini says:</strong> "Gịnị̄? (What?) Let me help you build thread-safe polyglot apps! 
+                I speak all languages through the GOSSIP protocol. No more race conditions, 
+                no more thread panics - just safe, reliable code across all platforms! 
+                #sorrynotsorry for making development this easy! 🎉"</p>
+            </div>
+        </section>
+
+        <!-- Platform Cards -->
+        <section>
+            <h3 style="text-align: center; margin-bottom: 2rem;">Deploy Everywhere with One Codebase</h3>
+            <div class="platforms-grid">
+                <div class="platform-card">
+                    <div class="platform-icon">📱</div>
+                    <h4>iOS</h4>
+                    <p>Native performance with Swift bridge</p>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon">🤖</div>
+                    <h4>Android</h4>
+                    <p>JNI integration with thread safety</p>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon">🌐</div>
+                    <h4>Web</h4>
+                    <p>WASM target for browser apps</p>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon">💻</div>
+                    <h4>Desktop</h4>
+                    <p>Cross-platform native apps</p>
+                </div>
+                <div class="platform-card">
+                    <div class="platform-icon">🔧</div>
+                    <h4>Embedded</h4>
+                    <p>IoT and medical devices</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Demo -->
+        <section class="code-demo">
+            <div class="code-header">
+                <span style="color: var(--primary-orange);">📝</span>
+                <h3>Sleep Apnea Monitor - Thread-Safe Implementation</h3>
+            </div>
+            <div class="code-block">
+                <pre><code><span class="decorator">@safety_critical(level=MEDICAL_DEVICE)</span>
+<span class="decorator">@thread_safe(lock_free=true)</span>
+<span class="keyword">actor</span> <span class="function">SleepApneaMonitor</span> {
+    <span class="keyword">state</span>: isolated;  <span class="comment">// Hardware-enforced isolation</span>
+    
+    <span class="decorator">@constant_time(guaranteed=true)</span>
+    <span class="keyword">fn</span> <span class="function">monitor_breathing</span>() -> <span class="keyword">Never</span> {
+        <span class="keyword">loop</span> {
+            <span class="keyword">let</span> vitals = <span class="function">read_sensors</span>();
+            
+            <span class="comment">// Thread-safe alert without race conditions</span>
+            <span class="keyword">if</span> (vitals.<span class="function">requires_intervention</span>()) {
+                alert_queue.<span class="function">push_atomic</span>(Alert::Critical);
+            }
+            
+            <span class="comment">// Secure telemetry via GOSSIP protocol</span>
+            <span class="keyword">GOSSIP</span> pinTelemetry <span class="keyword">TO</span> CLOUD {
+                <span class="function">send_encrypted</span>(vitals, ChaCha20Poly1305);
+            }
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- QA Metrics -->
+        <section class="qa-metrics">
+            <h3>Sleep Apnea QA Testing Metrics</h3>
+            <p style="margin-top: 0.5rem; color: rgba(255, 255, 255, 0.7);">
+                Real-time monitoring with stakeholder-compliant accuracy
+            </p>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">≥95%</div>
+                    <div class="metric-label">True Positive Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">≥95%</div>
+                    <div class="metric-label">True Negative Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">≤5%</div>
+                    <div class="metric-label">False Positive Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">≤5%</div>
+                    <div class="metric-label">False Negative Rate</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- R-Syntax Section -->
+        <section class="code-demo">
+            <div class="code-header">
+                <span style="color: var(--secondary-teal);">🔤</span>
+                <h3>R-Syntax: Raw String Literals for Pattern Matching</h3>
+            </div>
+            <div class="code-block">
+                <pre><code><span class="comment">// R"" syntax - no escape sequences needed</span>
+<span class="keyword">#define</span> VITALS_PATTERN <span class="string">R"(^VITALS:\s*HR=(\d+)\s*SPO2=(\d+)\s*RR=(\d+)$)"</span>
+
+<span class="comment">// R'' syntax - alternative delimiter</span>
+<span class="keyword">#define</span> ALERT_PATTERN <span class="string">R'(^ALERT:\s*(CRITICAL|WARNING|INFO):\s*(.+)$)'</span>
+
+<span class="comment">// Platform detection with R-syntax</span>
+<span class="keyword">#define</span> PLATFORM_IOS <span class="string">R"(^(iPhone|iPad|iPod).*iOS\s+(\d+)\.(\d+))"</span></code></pre>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-tagline">#sorrynotsorry #hacc #noghosting</p>
+        <p>OBINexus Computing • Services from the Heart ❤️</p>
+        <p style="margin-top: 1rem; color: rgba(255, 255, 255, 0.5);">
+            Powered by RIFT - Where Thread Safety Meets Polyglot Excellence
+        </p>
+    </footer>
+
+    <script>
+        // Create network background nodes
+        const networkBg = document.getElementById('networkBg');
+        for (let i = 0; i < 30; i++) {
+            const node = document.createElement('div');
+            node.className = 'network-node';
+            node.style.left = Math.random() * 100 + '%';
+            node.style.top = Math.random() * 100 + '%';
+            node.style.animationDelay = Math.random() * 3 + 's';
+            networkBg.appendChild(node);
+        }
+
+        // Animate platform cards on hover
+        document.querySelectorAll('.platform-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Gini's random messages
+        const giniMessages = [
+            "Gịnị̄? Need help with thread safety? I'm here!",
+            "No ghosting threads on my watch! 🦜",
+            "GOSSIP protocol activated - let's chat polyglot!",
+            "Remember: #sorrynotsorry for perfect thread safety!",
+            "Race conditions? Never heard of them! 💪"
+        ];
+
+        // Update Gini's speech bubble periodically
+        setInterval(() => {
+            const speechBubble = document.querySelector('.gini-speech p');
+            const randomMessage = giniMessages[Math.floor(Math.random() * giniMessages.length)];
+            speechBubble.innerHTML = `<strong>Gini says:</strong> "${randomMessage}"`;
+        }, 10000);
+    </script>
+</body>
+</html>
