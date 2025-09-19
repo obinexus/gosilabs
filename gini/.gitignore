@@ -1,0 +1,92 @@
+# GINI Project .gitignore
+# "Beautiful is better than ugly" - Python Zen via GINI
+
+# Build artifacts
+dist/
+build/
+target/
+*.exe
+*.dll
+*.so
+*.so.*
+*.a
+*.lib
+*.dylib
+*.rlib
+
+# Language specific
+## Go
+*.test
+*.out
+vendor/
+go.sum
+
+## Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv
+
+## C/C++
+*.o
+*.obj
+*.ko
+*.elf
+
+## Rust
+Cargo.lock
+/target/
+
+# Context and state files
+context_*.json
+polybuild_state.json
+checkpoint_*.json
+trace_history.json
+*.log
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*:Zone.Identifier
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+.project
+.classpath
+.settings/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+~*
+
+# Test coverage
+*.coverage
+*.gcov
+coverage/
+htmlcov/
+.coverage
+
+# Documentation build
+docs/_build/
+docs/_static/
+docs/_templates/

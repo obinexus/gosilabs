@@ -1,0 +1,6 @@
+# GINI Python Dependencies
+# "Explicit is better than implicit"
+
+Pillow>=9.0.0  # Image processing for favicon
+pytest>=7.0.0  # Testing framework
+black>=22.0.0  # Code formatting
