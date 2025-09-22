@@ -1,0 +1,47 @@
+// drone_problem_solver.rp
+namespace DroneProblems {
+    
+    // "Tipped Over" recovery
+    actor TippedOverRecovery {
+        fn detect_tipped() -> bool {
+            let orientation = imu.get_orientation();
+            return abs(orientation.roll) > 45° || 
+                   abs(orientation.pitch) > 45°;
+        }
+        
+        fn recover_from_tip() -> Recovery {
+            // AI can't solve this - need human
+            return HITLControl {
+                problem: "TIPPED_OVER",
+                required_actions: [
+                    "Physically right the robot",
+                    "Reset IMU calibration",
+                    "Verify motor function"
+                ]
+            };
+        }
+    }
+    
+    // "Wall Collision" recovery
+    actor WallCollisionRecovery {
+        fn detect_collision_trap() -> bool {
+            let front = lidar.distance_front < 10cm;
+            let back = lidar.distance_back < 10cm;
+            return front && back;  // Trapped!
+        }
+        
+        fn recover_from_trap() -> Recovery {
+            // Try AI first
+            if let Some(escape) = find_escape_sequence() {
+                return execute_escape(escape);
+            }
+            
+            // AI failed - need HITL
+            return HITLControl {
+                problem: "COLLISION_TRAP",
+                sensor_view: generate_3d_view(),
+                suggested_actions: calculate_escape_options()
+            };
+        }
+    }
+}

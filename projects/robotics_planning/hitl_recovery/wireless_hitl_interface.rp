@@ -1,0 +1,44 @@
+// wireless_hitl_interface.rp
+@latency_bound(max=100ms, guaranteed=true)
+actor WirelessHITLInterface {
+    state: isolated;
+    control_mode: enum { AI_CONTROL, HUMAN_CONTROL, MIXED };
+    
+    // Distortion signal when AI fails
+    struct DistortionSignal {
+        timestamp: u64,
+        failure_type: RecoveryScenario,
+        confidence: f32,
+        geometric_context: GeometricMap,
+        suggested_recovery: Vec<RecoveryAction>
+    }
+    
+    // Switch control based on AI confidence
+    fn manage_control_handoff() {
+        loop {
+            let ai_status = ai.get_navigation_status();
+            
+            match ai_status.confidence {
+                0.0..0.3 => {
+                    // Full human control
+                    control_mode = HUMAN_CONTROL;
+                    disable_ai_motors();
+                    enable_wireless_control();
+                },
+                0.3..0.6 => {
+                    // Mixed control - human supervises
+                    control_mode = MIXED;
+                    ai.suggest_actions();
+                    human.approve_or_override();
+                },
+                0.6..1.0 => {
+                    // AI in control
+                    control_mode = AI_CONTROL;
+                    ai.execute_autonomously();
+                }
+            }
+            
+            gosi.yield_if_needed();  // Allow interrupt
+        }
+    }
+}
