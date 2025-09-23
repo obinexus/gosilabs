@@ -1,0 +1,9 @@
+# token_file.txt - PhenoMemory Token Definitions
+# Format: ID TYPE NAME [PROPERTIES]
+
+1 0x01 NODE_IDENTITY subject=alpha,class=primary
+2 0x02 NODE_STATE active=true,degradation=0.0
+3 0x04 CLUSTER_TOPOLOGY nodes=4,topology=ring
+4 0x06 FRAME_REFERENCE frame_id=42,timestamp=1234567890
+5 0x03 NODE_DEGRADATION score=0.7,retry=3
+6 0x05 CLUSTER_CONSENSUS quorum=3,agreement=0.95
