@@ -45,7 +45,7 @@ void generate_svg_from_tokens(PhenoToken* tokens, int count, const char* output_
         fprintf(svg, "  <text x=\"%d\" y=\"%d\" text-anchor=\"middle\" ",
                 x + node_width/2, y + 25);
         fprintf(svg, "font-family=\"monospace\" font-size=\"14\" font-weight=\"bold\">");
-        fprintf(svg, "%s</text>\n", token->token_id);
+        fprintf(svg, "%s</text>\n", token->sentinel);
         
         fprintf(svg, "  <text x=\"%d\" y=\"%d\" text-anchor=\"middle\" ",
                 x + node_width/2, y + 45);
