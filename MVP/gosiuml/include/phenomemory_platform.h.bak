@@ -6,11 +6,6 @@
 #include <stdbool.h>
 #include <pthread.h>
 
-// Define atomic types for C11 compatibility
-typedef _Atomic uint32_t atomic_uint32_t;
-typedef _Atomic bool atomic_bool;
-typedef _Atomic unsigned int atomic_uint;
-
 // Forward declarations
 typedef struct PhenoToken PhenoToken;
 typedef struct StateMachine StateMachine;
