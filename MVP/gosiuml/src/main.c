@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 // Object-to-Object mapping function
 void map_obj_to_obj(PhenoRelation* src, PhenoRelation* dst) {
     // XOR for differential mapping
