@@ -1,4 +1,4 @@
-// include/phenomology_platform.h
+// include/phenomemory_platform.h
 #ifndef PHENOMOLOGY_PLATFORM_H
 #define PHENOMOLOGY_PLATFORM_H
 
