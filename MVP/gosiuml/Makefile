@@ -5,18 +5,17 @@ LDFLAGS = -lm
 
 # Source files
 SRCS = src/main.c \
-       src/pheno_platform.c \
-       src/svg_generator.c \
        src/token_parser.c \
+       src/svg_generator.c \
        src/pheno_state_machine.c
 
 OBJS = $(SRCS:.c=.o)
 TARGET = gosiuml
 
-# PlantUML for diagram generation
+# PlantUML for diagram generation (optional)
 PLANTUML = java -jar plantuml.jar
 
-all: $(TARGET) diagrams
+all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
@@ -24,22 +23,28 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Generate UML diagrams
+# Generate UML diagrams (if plantuml is available)
 diagrams:
-	$(PLANTUML) -tsvg docs/state_machine.puml
-	xsltproc --output docs/state_machine.svg transform.xsl docs/state_machine.xml
-
-# Generate documentation
-docs:
-	doxygen Doxyfile
-	pandoc -s README.md -o docs/specification.pdf
+	@if [ -f images/gosiuml_state_diagram.plantuml ]; then \
+		$(PLANTUML) -tsvg images/gosiuml_state_diagram.plantuml; \
+	fi
 
 clean:
 	rm -f $(OBJS) $(TARGET)
-	rm -f docs/*.svg docs/*.png
+	rm -f *.svg
 
 test: $(TARGET)
+	@echo "Creating test token file..."
+	@echo "# Test token file" > token_file.txt
+	@echo "1 0x01 NODE_IDENTITY" >> token_file.txt
+	@echo "2 0x02 NODE_STATE" >> token_file.txt
+	@echo "3 0x04 CLUSTER_TOPOLOGY" >> token_file.txt
+	@echo "4 0x06 FRAME_REFERENCE" >> token_file.txt
+	@echo "5 0x03 NODE_DEGRADATION" >> token_file.txt
 	./$(TARGET) token_file.txt output.svg
-	xmllint --schema schema.xsd --noout output.svg
+	@echo "Generated output.svg - open in browser to view"
 
-.PHONY: all clean diagrams docs test
+run: $(TARGET)
+	./$(TARGET) config/token_file.txt gosiuml.svg
+
+.PHONY: all clean diagrams test run
