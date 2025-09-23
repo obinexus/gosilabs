@@ -1,4 +1,4 @@
-// include/gosiuml.h - Main GosiUML library header
+// include/gosiuml.h - Main GosiUML library header (FIXED)
 #ifndef GOSIUML_H
 #define GOSIUML_H
 
@@ -42,14 +42,30 @@ typedef enum {
     GOSIUML_OPT_MEMORY_TRACKING = 4
 } GosiUMLOption;
 
-// Forward declarations
+// Forward declarations only - actual definitions in phenomemory_platform.h
+struct PhenoToken;
+struct GosiUMLContext;
+struct PhenoTokenType;
+struct PhenoRelation;
+
 typedef struct PhenoToken PhenoToken;
 typedef struct GosiUMLContext GosiUMLContext;
-typedef struct PhenoTokenType PhenoTokenType;
-typedef struct PhenoRelation PhenoRelation;
 
-// Include sub-headers
+// State definitions (moved here to avoid conflicts)
+typedef enum {
+    STATE_NIL,
+    STATE_ALLOCATED,
+    STATE_LOCKED,
+    STATE_ACTIVE,
+    STATE_DEGRADED,
+    STATE_SHARED,
+    STATE_FREED
+} PhenoState;
+
+// Include the main platform header which has the actual struct definitions
 #include "phenomemory_platform.h"
+
+// Include CLI parser after platform definitions
 #include "cli_parser.h"
 
 // ============================================
@@ -185,17 +201,6 @@ GOSIUML_API int gosiuml_generate_xml(GosiUMLContext* ctx, PhenoToken* tokens,
 GOSIUML_API int gosiuml_generate_json(GosiUMLContext* ctx, PhenoToken* tokens, 
                                       int count, const char* output_file);
 
-/**
- * Generate PlantUML output
- * @param ctx Context
- * @param tokens Token array
- * @param count Token count
- * @param output_file Output file path
- * @return 0 on success
- */
-GOSIUML_API int gosiuml_generate_plantuml(GosiUMLContext* ctx, PhenoToken* tokens,
-                                          int count, const char* output_file);
-
 // ============================================
 // State Machine Operations
 // ============================================
@@ -214,13 +219,6 @@ GOSIUML_API int gosiuml_get_state(PhenoToken* token);
  * @return 0 on success, -1 if transition invalid
  */
 GOSIUML_API int gosiuml_transition(PhenoToken* token, int new_state);
-
-/**
- * Validate state machine transitions
- * @param ctx Context
- * @return 0 if valid, error code otherwise
- */
-GOSIUML_API int gosiuml_validate_state_machine(GosiUMLContext* ctx);
 
 // ============================================
 // Testing Functions
@@ -266,16 +264,3 @@ GOSIUML_API void gosiuml_set_debug(bool enable);
 #endif
 
 #endif // GOSIUML_H
-
-// include/cli_parser.h - CLI specific header
-#ifndef CLI_PARSER_H
-#define CLI_PARSER_H
-
-#include "gosiuml.h"
-
-// CLI-specific functions
-int parse_cli_config(const char* config_file);
-void print_token_info(PhenoToken* token);
-void display_state_diagram(GosiUMLContext* ctx);
-
-#endif // CLI_PARSER_H
