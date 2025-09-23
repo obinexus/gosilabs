@@ -25,17 +25,6 @@ typedef enum {
     GOSIUML_OPT_STATE_MACHINE = 3,
     GOSIUML_OPT_MEMORY_TRACKING = 4
 } GosiUMLOption;
-
-// Forward declaration of context structure
-typedef struct GosiUMLContext GosiUMLContext;
-
-// Include platform definitions (contains PhenoToken, PhenoState, etc)
-#include "phenomemory_platform.h"
-
-// Function prototypes
-int gosiuml_init(void);
-void gosiuml_cleanup(void);
-const char* gosiuml_version(void);
 GosiUMLContext* gosiuml_create_context(void);
 void gosiuml_free_context(GosiUMLContext* ctx);
 int gosiuml_set_option(GosiUMLContext* ctx, GosiUMLOption option, int value);
@@ -60,4 +49,3 @@ int parse_token_file(const char* filename);
 int generate_svg(const char* output_file);
 
 #endif // GOSIUML_H
-

@@ -35,7 +35,8 @@ int parse_token_file(const char* filename) {
                 PhenoToken* token = pheno_token_alloc(1024);
                 if (token) {
                     token->token_id = id;
-                    snprintf(token->sentinel, 16, "%s", type);
+                    strncpy(token->sentinel, type, 15);
+                    token->sentinel[15] = '\0';  // Ensure null termination
                     token->memory_zone = atoi(zone);
                     
                     // Process the token
