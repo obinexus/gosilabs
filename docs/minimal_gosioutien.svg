@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420">
+  <style>
+    .box{fill:#0b1220; stroke:#9be7ff; stroke-width:2; rx:8; }
+    .txt{font-family:Inter,monospace; fill:#e6fdff; font-size:13px}
+    .arrow{stroke:#9be7ff; stroke-width:2; marker-end:url(#arrow)}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5"
+      orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#9be7ff"/></marker>
+  </defs>
+
+  <!-- Gosi -->
+  <rect x="40" y="40" width="180" height="80" class="box"/>
+  <text x="50" y="65" class="txt">GosiRoutine</text>
+  <text x="50" y="85" class="txt small">yield / pause hooks</text>
+
+  <!-- Gate -->
+  <rect x="260" y="40" width="160" height="80" class="box"/>
+  <text x="275" y="70" class="txt">Gate (QA)</text>
+  <text x="275" y="90" class="txt small">tags: ref_footprint</text>
+
+  <!-- AVL-Huffman -->
+  <rect x="460" y="40" width="200" height="80" class="box"/>
+  <text x="475" y="65" class="txt">AVLHuffman Loader</text>
+  <text x="475" y="85" class="txt small">module weights</text>
+
+  <!-- Sanctuary -->
+  <rect x="720" y="30" width="240" height="120" class="box"/>
+  <text x="735" y="55" class="txt">GINI-Sanctuary</text>
+  <text x="735" y="75" class="txt small">observe / quarantine / reclaim</text>
+
+  <!-- Quarantine & HITL -->
+  <rect x="460" y="160" width="200" height="80" class="box"/>
+  <text x="475" y="195" class="txt">Quarantine</text>
+  <rect x="720" y="160" width="240" height="80" class="box"/>
+  <text x="735" y="195" class="txt">HITL Manager</text>
+
+  <!-- arrows -->
+  <line x1="220" y1="80" x2="260" y2="80" class="arrow"/>
+  <line x1="420" y1="80" x2="460" y2="80" class="arrow"/>
+  <line x1="660" y1="80" x2="720" y2="80" class="arrow"/>
+  <line x1="560" y1="120" x2="560" y2="160" class="arrow" />
+  <line x1="660" y1="200" x2="720" y2="200" class="arrow" />
+</svg>
