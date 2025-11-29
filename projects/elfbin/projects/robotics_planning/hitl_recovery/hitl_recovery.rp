@@ -1,0 +1,53 @@
+// hitl_recovery.rp
+@manifesto(name="HITLRecovery", safety=MAX)
+actor HITLRecoverySystem {
+    confidence_threshold: 0.6;  // Below this, human takes control
+    
+    // Named recovery scenarios based on drone problems
+    enum RecoveryScenario {
+        TIPPED_OVER,         // Robot has fallen
+        NAVIGATION_LOST,     // Can't find path
+        SENSOR_DISTORTION,   // Bad sensor data
+        OBSTACLE_TRAP,       // Stuck between obstacles
+        BATTERY_CRITICAL     // Emergency landing needed
+    }
+    
+    // AI attempts navigation, falls back to HITL
+    fn navigate_with_hitl(goal: Position) -> NavigationResult {
+        let ai_confidence = assess_situation();
+        
+        if ai_confidence < confidence_threshold {
+            return trigger_hitl_recovery();
+        }
+        
+        // Try AI navigation
+        match ai_plan_path(goal) {
+            Ok(path) => execute_path(path),
+            Err(NavigationError::NO_PATH) => {
+                // AI failed - activate HITL
+                emit_distortion_signal();
+                return HITLControl::REQUEST_HUMAN;
+            }
+        }
+    }
+    
+    // Human takes control when AI fails
+    fn trigger_hitl_recovery() -> RecoveryResult {
+        // 1. Freeze robot motion
+        robot.emergency_stop();
+        
+        // 2. Send distortion signal with problem context
+        let context = analyze_failure_mode();
+        wireless.broadcast(DistortionSignal {
+            scenario: detect_recovery_scenario(),
+            sensor_state: get_all_sensors(),
+            last_known_good: robot.previous_stable_state
+        });
+        
+        // 3. Wait for human operator
+        GINI.ask("AI navigation failed. Ready for manual control?");
+        
+        // 4. Human operator takes control
+        return wireless.receive_human_commands();
+    }
+}

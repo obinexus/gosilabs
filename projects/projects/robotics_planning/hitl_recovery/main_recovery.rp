@@ -1,0 +1,44 @@
+// main_recovery.rp
+fn main() {
+    let robot = RobotParkour::new();
+    let hitl = HITLRecoverySystem::new();
+    let tokenizer = GeometricTokenizer::new();
+    
+    loop {
+        // 1. Tokenize environment into geometric map
+        let geo_map = tokenizer.tokenize_environment(
+            robot.get_sensors()
+        );
+        
+        // 2. AI attempts navigation
+        let ai_result = robot.navigate(geo_map);
+        
+        // 3. Check if AI failed
+        if ai_result.is_err() || ai_result.confidence < 0.6 {
+            // 4. Send distortion signal
+            wireless.emit(DistortionSignal {
+                failure_type: DroneProblems::identify_problem(),
+                geometric_context: geo_map,
+                suggested_recovery: hitl.suggest_recovery()
+            });
+            
+            // 5. Human takes control
+            GINI.ask("AI navigation failed. Take manual control?");
+            
+            // 6. Execute human commands
+            while control_mode == HUMAN_CONTROL {
+                let command = wireless.receive_command();
+                robot.execute_manual(command);
+                
+                // 7. Check if AI can resume
+                if ai.confidence_restored() {
+                    GINI.ask("AI ready to resume. Hand back control?");
+                    control_mode = AI_CONTROL;
+                }
+            }
+        }
+        
+        // Yield for other operations
+        gosi.yield_if_needed();
+    }
+}

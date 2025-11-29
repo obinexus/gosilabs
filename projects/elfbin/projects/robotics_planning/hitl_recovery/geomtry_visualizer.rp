@@ -1,0 +1,38 @@
+// geometry_visualizer.rp
+actor GeometryVisualizer {
+    // Real-time 3D view for HITL operator
+    fn generate_hitl_view(robot_state: RobotState) -> Visualization {
+        let view = Canvas3D::new();
+        
+        // Draw robot position and orientation
+        view.draw_robot(
+            position: robot_state.position,
+            orientation: robot_state.orientation,
+            color: match robot_state.health {
+                GOOD => GREEN,
+                WARNING => YELLOW,
+                CRITICAL => RED
+            }
+        );
+        
+        // Draw obstacles as geometric constraints
+        for obstacle in robot_state.obstacles {
+            view.draw_constraint(
+                shape: obstacle.convex_hull,
+                opacity: obstacle.certainty
+            );
+        }
+        
+        // Draw AI's planned path (if any)
+        if let Some(path) = ai.current_plan {
+            view.draw_path(path, style: DASHED);
+        }
+        
+        // Show danger zones
+        for zone in calculate_danger_zones() {
+            view.draw_zone(zone, color: RED, pattern: STRIPED);
+        }
+        
+        return view.render();
+    }
+}
